@@ -22,8 +22,14 @@ td { border:1px solid black;}
 <script src='https://code.jquery.com/jquery-latest.js'></script>
 <script>
 $(document)
+.ready(function(){
+	<% String message = (String) request.getAttribute("message"); %>
+    <% if (message != null && !message.equals("")) { %>
+        alert('<%= message %>');
+    <% } %>
+})
 .on('click', '#cancel',function(){
 	document.location='/cancellogin';
-})
+});
 </script>
 </html>

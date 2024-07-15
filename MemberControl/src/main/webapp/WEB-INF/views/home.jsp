@@ -20,6 +20,9 @@ td { border:1px solid black;}
 <tr>
 	<td style="text-align:center; font-size:36px">안녕하세요. 이정건의 홈페이지 입니다.</td>
 </tr>
+<tr>
+	<td><a href="nothing">로그인하면 입장가능</a></td>
+</tr>
 </table>
 </body>
 </html>
