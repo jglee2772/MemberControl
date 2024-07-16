@@ -1,11 +1,12 @@
 package com.himedia.mc;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -13,20 +14,27 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class HomeController {
 	@Autowired MemberDAO mdao;
+	@Autowired BoardDAO bdao;
 	
 	@GetMapping("/")
 	public String home(HttpServletRequest req, Model model) {
 		String linkstr="";
+		String newpost="";
 		HttpSession s =req.getSession();
 		String userid = (String) s.getAttribute("userid");
 		if(userid == null || userid.equals("")) {
 			linkstr = "<a href='/login'>로그인</a>&nbsp&nbsp&nbsp;"+
 					"<a href='/signup'>회원가입</a>";
+			newpost = "";
 		}else {
 			linkstr = "사용자["+userid+"]&nbsp&nbsp;"+
 					"<a href='/logout'>로그아웃</a>";
+			newpost = "<a href='/write'>새글작성</a>";
 		}
 		model.addAttribute("linkstr",linkstr);
+		model.addAttribute("newpost",newpost);
+		ArrayList<boardDTO> arBoard = bdao.getList();
+		model.addAttribute("arBoard",arBoard);
 		return "home";
 	}
 	@GetMapping("/logout")
@@ -84,7 +92,7 @@ public class HomeController {
 	}
 	
 	
-	@GetMapping("/nothing")
+	@GetMapping("/board")
 	public String nothing(HttpServletRequest req,Model model) {
 		HttpSession s = req.getSession();
 		String userid = (String) s.getAttribute("userid");
@@ -92,6 +100,69 @@ public class HomeController {
 			model.addAttribute("message", "로그인이 필요합니다.");
 			return "login";
 		}
-		return "nothing";
+		return "board";
+	}
+	@GetMapping("/write")
+	public String write(HttpServletRequest req, Model model) {
+		HttpSession s = req.getSession();
+		String userid = (String) s.getAttribute("userid");
+		model.addAttribute("userid",userid);
+		return "board/write";
+	}
+	@PostMapping("/save")
+	public String save(HttpServletRequest req, Model model) {
+		String title = req.getParameter("title");
+		String writer = req.getParameter("writer");
+		String content = req.getParameter("content");
+		bdao.insert(title, writer, content);
+		return "redirect:/";
+	}
+	@GetMapping("/view")
+	public String view(HttpServletRequest req, Model model) {
+		int id =Integer.parseInt(req.getParameter("id"));
+		boardDTO bdto = bdao.getView(id);
+		bdao.addHit(id);
+		model.addAttribute("board",bdto);
+		return "board/view";
+	}
+	@GetMapping("delete")
+	public String delete(HttpServletRequest req) {
+		HttpSession s = req.getSession();
+		String userid = (String) s.getAttribute("userid");
+		if (userid==null||userid.equals("")) {
+			return "redirect:/";
+		}
+		int id = Integer.parseInt(req.getParameter("id"));
+		boardDTO bdto = bdao.getView(id);
+		if(userid.equals(bdto.getWriter())) {
+			bdao.deleteView(id);
+			return "redirect:/";
+		} else {
+			return "redirect:/";
+		}
+	}
+	@GetMapping("update")
+	public String update(HttpServletRequest req, Model model) {
+		HttpSession s = req.getSession();
+		String userid = (String) s.getAttribute("userid");
+		if (userid==null||userid.equals("")) {
+			return "redirect:/";
+		}
+		int id =Integer.parseInt(req.getParameter("id"));
+		boardDTO bdto = bdao.getView(id);
+		if(userid.equals(bdto.getWriter())) {
+			model.addAttribute("board",bdto);
+			return "board/update";
+		} else {
+			return "redirect:/";
+		}
+	}
+	@PostMapping("modify")
+	public String modify(HttpServletRequest req, Model model) {
+		int id = Integer.parseInt(req.getParameter("id"));
+		String title = req.getParameter("title");
+		String content = req.getParameter("content");
+		bdao.updateView(id, title, content);
+		return "redirect:/";
 	}
 }

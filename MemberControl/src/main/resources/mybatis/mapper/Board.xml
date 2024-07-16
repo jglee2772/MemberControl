@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.himedia.mc.BoardDAO">
+	<insert id="insert">
+		insert into board set title=#{param1},content=#{param3},
+		writer=(select id from member where userid=#{param2})
+	</insert>
+	<select id="getList" resultType="com.himedia.mc.boardDTO">
+		select a.id,a.title,a.content,b.userid writer,a.created,a.updated
+		  from board a,member b
+		 where a.writer=b.id
+	</select>
+	<select id="getView" resultType="com.himedia.mc.boardDTO">
+		select a.id,a.title,a.content,b.userid writer,a.created,a.updated
+		  from board a,member b
+		 where a.writer=b.id and a.id=#{param1}
+	</select>
+	<delete id="deleteView">
+		delete from board where id=#{param1}
+	</delete>
+	<update id="updateView">
+		update board set title=#{param2},content=#{param3},updated=current_timestamp where id=#{param1}
+	</update>
+	<update id="addHit">
+		update board set hit=hit+1 where id=#{param1}
+	</update>
+</mapper>
