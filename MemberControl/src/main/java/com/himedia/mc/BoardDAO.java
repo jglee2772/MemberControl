@@ -7,7 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface BoardDAO {
 	void insert(String a,String b,String c);
-	ArrayList<boardDTO> getList();
+	ArrayList<boardDTO> getList(int s);
+	int getCount();
 	boardDTO getView(int a);
 	void deleteView(int a);
 	void updateView(int a, String b, String c);

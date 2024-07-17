@@ -37,6 +37,7 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation group:'org.glassfish.web', name:'jakarta.servlet.jsp.jstl', version:'2.0.0'
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
+	implementation 'org.json:json:20210307'
 }
 
 tasks.named('test') {

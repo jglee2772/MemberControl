@@ -10,4 +10,5 @@ public class boardDTO {
 	String writer;
 	String created;
 	String updated;
+	int hit;
 }

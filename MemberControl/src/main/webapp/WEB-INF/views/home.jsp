@@ -26,12 +26,13 @@ th { border:1px solid white; background-color:black; color:white}
 </table>
 <br>
 <table>
-<tr><td colspan=4 style='text-align:right; border:none'>${newpost}</td></tr>
-<tr><th>번호</th><th>제목</th><th>글쓴이</th><th>작성일</th></tr>
+<tr><td colspan=5 style='text-align:right; border:none'>${newpost}</td></tr>
+<tr><th>번호</th><th>제목</th><th>글쓴이</th><th>작성일</th><th>조회수</th></tr>
 <c:forEach items="${arBoard}" var="board">
 <tr><td style='text-align:center;'>${board.id}</td><td><a href="/view?id=${board.id}">${board.title}</a></td><td>${board.writer}</td>
-	<td>${board.created}</td></tr>
+	<td>${board.created}</td><td style='text-align:center;'>${board.hit}</td></tr>
 </c:forEach>
+<tr><td style="text-align:center;" colspan=5>${movestr}</td></tr>
 </table>
 </body>
 </html>

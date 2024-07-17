@@ -11,7 +11,7 @@ table { margin:auto; border-collapse:collapsed;}
 td { border:1px solid black;}
 </style>
 <body>
-<form method="post" action="doLogin">
+<form method="post" action="/doLogin">
 <table>
 <tr><td>아이디 :</td><td><input type=text name=userid id=userid></td>
 <tr><td>비밀번호 :</td><td><input type=password name=password id=password></td>

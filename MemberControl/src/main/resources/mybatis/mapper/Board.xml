@@ -6,12 +6,14 @@
 		writer=(select id from member where userid=#{param2})
 	</insert>
 	<select id="getList" resultType="com.himedia.mc.boardDTO">
-		select a.id,a.title,a.content,b.userid writer,a.created,a.updated
+		select a.id,a.title,a.content,b.userid writer,a.created,a.updated,a.hit
 		  from board a,member b
 		 where a.writer=b.id
+		 order by created
+		 limit #{param1},20
 	</select>
 	<select id="getView" resultType="com.himedia.mc.boardDTO">
-		select a.id,a.title,a.content,b.userid writer,a.created,a.updated
+		select a.id,a.title,a.content,b.userid writer,a.created,a.updated,a.hit
 		  from board a,member b
 		 where a.writer=b.id and a.id=#{param1}
 	</select>
@@ -24,4 +26,7 @@
 	<update id="addHit">
 		update board set hit=hit+1 where id=#{param1}
 	</update>
+	<select id="getCount" resultType="_int">
+		select count(*) from board
+	</select>
 </mapper>
