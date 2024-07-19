@@ -6,9 +6,8 @@
 		writer=(select id from member where userid=#{param2})
 	</insert>
 	<select id="getList" resultType="com.himedia.mc.boardDTO">
-		select a.id,a.title,a.content,b.userid writer,a.created,a.updated,a.hit
-		  from board a,member b
-		 where a.writer=b.id
+		select a.id,a.title,a.content,b.userid writer,a.created,a.updated,a.hit 
+		  from board a left outer join member b on a.writer=b.id
 		 order by created
 		 limit #{param1},20
 	</select>

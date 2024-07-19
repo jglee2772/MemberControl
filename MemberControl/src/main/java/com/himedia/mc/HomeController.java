@@ -23,7 +23,7 @@ public class HomeController {
 	@PostMapping("/list")
 	@ResponseBody
 	public String doList(HttpServletRequest req) {
-		int start = 1;
+		int start = 0;
 		ArrayList<boardDTO> arBoard = bdao.getList(start);
 		JSONArray ja = new JSONArray();
 		for(boardDTO bdto : arBoard) {
@@ -39,8 +39,21 @@ public class HomeController {
 		}
 		return ja.toString();
 	}
+	@PostMapping("/boardContent")
+	@ResponseBody
+	public String contentin(HttpServletRequest req) {
+		int id = Integer.parseInt(req.getParameter("id"));
+		boardDTO bdto = bdao.getView(id);		
+		return bdto.getContent();
+	}
+	
 	@GetMapping("/crud")
-	public String crud() {
+	public String crud(HttpServletRequest req) {
+		HttpSession s = req.getSession();
+		String userid = (String) s.getAttribute("userid");
+		if (userid==null||userid.equals("")) {
+			return "redirect:/login";
+		}
 		return "ajax/crud";
 	}
 	@GetMapping("/menuctrl")
@@ -61,7 +74,56 @@ public class HomeController {
 		}
 		return ma.toString();
 	}
-	
+	@PostMapping("/addMenu")
+	@ResponseBody
+	public String Addmenu(HttpServletRequest req) {
+		String name = req.getParameter("name");
+		String price = req.getParameter("price");
+		pdao.insertAddMenu(name, Integer.parseInt(price));
+		return "ok";
+	}
+	@PostMapping("/updateMenu")
+	@ResponseBody
+	public String updateMenu(HttpServletRequest req) {
+		int id = Integer.parseInt(req.getParameter("id"));
+		String name = req.getParameter("name");
+		int price = Integer.parseInt(req.getParameter("price"));
+		pdao.updateMenu(id, name, price);
+		return "ok";
+	}
+	@PostMapping("/deleteMenu")
+	@ResponseBody
+	public String deleteMenu(HttpServletRequest req) {
+		int id = Integer.parseInt(req.getParameter("id"));
+		pdao.deleteMenu(id);
+		return "ok";
+	}
+	@PostMapping("/saveBoard")
+	@ResponseBody
+	public String save(HttpServletRequest req) {
+		HttpSession s = req.getSession();
+		String writer = (String) s.getAttribute("userid");
+		String title = req.getParameter("title");
+		String content = req.getParameter("content");
+		bdao.insert(title, writer, content);
+		return "ok";
+	}
+	@PostMapping("/updateBoard")
+	@ResponseBody
+	public String updateBoard(HttpServletRequest req) {
+		int id = Integer.parseInt(req.getParameter("id"));
+		String title = req.getParameter("title");
+		String content = req.getParameter("content");
+		bdao.updateView(id,title, content);
+		return "ok";
+	}
+	@PostMapping("/deleteBoard")
+	@ResponseBody
+	public String deleteBoard(HttpServletRequest req) {
+		int id = Integer.parseInt(req.getParameter("id"));
+		bdao.deleteView(id);
+		return "ok";
+	}
 	@GetMapping("/")
 	public String home(HttpServletRequest req, Model model) {
 		String linkstr="";

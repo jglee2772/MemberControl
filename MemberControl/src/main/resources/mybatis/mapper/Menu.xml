@@ -4,4 +4,13 @@
 	<select id="getMenuList" resultType="com.himedia.mc.menuDTO">
 		select id,name,price from menu
 	</select>
+	<insert id='insertAddMenu'>
+		insert into menu set name=#{param1},price=#{param2}
+	</insert>
+	<delete id="deleteMenu">
+		delete from menu where id=#{param1}
+	</delete>
+	<update id="updateMenu">
+		update menu set name=#{param2},price=#{param3} where id=#{param1}
+	</update>
 </mapper>
