@@ -60,6 +60,10 @@ public class HomeController {
 	public String menuCtrl() {
 		return "menu/crud";
 	}
+	@GetMapping("/orderctrl")
+	public String orderCtrl() {
+		return "menu/order";
+	}
 	@PostMapping("/menulist")
 	@ResponseBody
 	public String menuList(HttpServletRequest req) {
@@ -73,6 +77,23 @@ public class HomeController {
 			ma.put(mo);
 		}
 		return ma.toString();
+	}
+	@PostMapping("/revenuelist")
+	@ResponseBody
+	public String revenuelist(HttpServletRequest req) {
+		ArrayList<revenueDTO> arRev = pdao.getRevList();
+		JSONArray ra = new JSONArray();
+		for(revenueDTO rdto : arRev) {
+			JSONObject ro = new JSONObject();
+			ro.put("id", rdto.getId());
+			ro.put("mobile", rdto.getMobile());
+			ro.put("menuname", rdto.getMenuid());
+			ro.put("qty", rdto.getQty());
+			ro.put("menusum", rdto.getMenusum());
+			ro.put("created", rdto.getCreated());
+			ra.put(ro);
+		}
+		return ra.toString();
 	}
 	@PostMapping("/addMenu")
 	@ResponseBody
@@ -96,6 +117,16 @@ public class HomeController {
 	public String deleteMenu(HttpServletRequest req) {
 		int id = Integer.parseInt(req.getParameter("id"));
 		pdao.deleteMenu(id);
+		return "ok";
+	}
+	@PostMapping("/addRevenue")
+	@ResponseBody
+	public String addRevenue(HttpServletRequest req) {
+		String mobile = req.getParameter("mobile");
+		int menuid = Integer.parseInt(req.getParameter("menuid"));
+		int qty = Integer.parseInt(req.getParameter("qty"));
+		int menusum = Integer.parseInt(req.getParameter("menusum"));
+		pdao.insertAddrev(mobile, menuid, qty, menusum);
 		return "ok";
 	}
 	@PostMapping("/saveBoard")

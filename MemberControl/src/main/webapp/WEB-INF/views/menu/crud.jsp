@@ -12,6 +12,17 @@ td { border:1px solid black;}
 th { border:1px solid white; background-color:black; color:white}
 </style>
 <body>
+<table style='width:100%'>
+<tr>
+	<td style='width:30%;text-align:left;border:none;'>
+		<a href='/orderctrl'>주문관리</a>
+	</td>
+	<td style='width:40%;text-align:center;border:none;'>
+		<h1>메뉴관리</h1>
+	</td>
+	<td style='width:30%;border:none;'>
+	</td>
+</table>
 <input type=hidden id=id>
 <table>
 	<tr><td>메뉴명</td><td><input type=text id=title></td></tr>
@@ -34,27 +45,12 @@ th { border:1px solid white; background-color:black; color:white}
 <script>
 $(document)
 .ready(function(){
-	$('#btnLoadm').trigger('click');
+	loadMenu();
 })
 .on('click','#btnClear',function(){
 	$('#id,#title,#price').val("");
 })
-.on('click','#btnLoadm',function(){
-	$.ajax({
-		url:'/menulist',type:'post',data:{},dataType:'json',
-		success:function(data){
-			$('#tblMenu tbody').empty();
-			for(let x of data) {
-				let strm = '<tr>';
-				strm +='<td>'+x['id']+'</td><td>'+x['name']+'</td><td>'+x['price']+'</td></tr>';
-				$('#tblMenu tbody').append(strm);
-			}
-		},
-		error:function(){},
-		complete:function(){}
-	})
-	return false;
-})
+
 .on('click','#btnAdd',function(){
 	let id = $('#id').val();
 	let title = $('#title').val();
@@ -65,7 +61,8 @@ $(document)
 			url:'/addMenu',type:'post',data:{name:title,price:price},dataType:'text',
 			success:function(data){
 				if(data=='ok') {
-					$('#btnLoadm,#btnClear').trigger('click');
+					$('#btnClear').trigger('click');
+					loadMenu();
 				}
 			}
 		})
@@ -74,7 +71,8 @@ $(document)
 			url:'/updateMenu',type:'post',data:{id:id,name:title,price:price},dataType:'text',
 			success:function(data){
 				if(data=='ok') {
-					$('#btnLoadm,#btnClear').trigger('click');
+					$('#btnClear').trigger('click');
+					loadMenu();
 				}
 			}
 		})
@@ -96,24 +94,28 @@ $(document)
 		url:'/deleteMenu',type:'post',data:{id:id},dataType:'text',
 		success:function(data) {
 			if(data=='ok') {
-				$('#btnLoadm,#btnClear').trigger('click');
+				$('#btnClear').trigger('click');
+				loadMenu();
 			}
 		}
 	})
 })
-
-
-<!--
-.on('click','#btnLoadm',function(){
-	$.post('/menulist',{},function(data){
-		$('#tblMenu tbody').empty();
-		for(let x of data) {
-			let strm = '<tr>';
-			strm +='<td>'+x['id']+'</td><td>'+x['name']+'</td><td>'+x['price']+'</td></tr>';
-			$('#tblMenu tbody').append(strm);
-		}
-	},'json');
-})
--->
+;
+function loadMenu() {
+	$.ajax({
+		url:'/menulist',type:'post',data:{},dataType:'json',
+		success:function(data){
+			$('#tblMenu tbody').empty();
+			for(let x of data) {
+				let strm = '<tr>';
+				strm +='<td>'+x['id']+'</td><td>'+x['name']+'</td><td>'+x['price']+'</td></tr>';
+				$('#tblMenu tbody').append(strm);
+			}
+		},
+		error:function(){},
+		complete:function(){}
+	})
+	return false;
+}
 </script>
 </html>

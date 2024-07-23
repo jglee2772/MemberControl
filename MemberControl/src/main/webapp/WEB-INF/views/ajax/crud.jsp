@@ -35,27 +35,12 @@ th { border:1px solid white; background-color:black; color:white}
 <script>
 $(document)
 .ready(function(){
-	$('#btnLoad').trigger('click');
+	loadBoard();
 })
 .on('click','#btnClear',function(){
 	$('#title,#writer,#content,#id').val("");
 })
-.on('click','#btnLoad',function(){
-	$.ajax({
-		url:'/list',type:'post',data:{},dataType:'json',
-		success:function(data){
-			$('#tblBoard tbody').empty();
-			for(let x of data) {
-				let str = '<tr>';
-				str +='<td>'+x['id']+'</td><td>'+x['title']+'</td><td>'+x['writer']+'</td><td>'+x['created']+'</td><td>'+x['hit']+'</td></tr>';
-				$('#tblBoard').append(str);
-			}
-		},
-		error:function(){},
-		complete:function(){}
-	})
-	return false;
-})
+
 .on('click','#btnSave',function(){
 	let id = $('#id').val();
 	let title = $('#title').val();
@@ -67,7 +52,8 @@ $(document)
 			url:'/saveBoard',type:'post',data:{title:title,content:content},dataType:'text',
 			success:function(data){
 				if(data=='ok') {
-					$('#btnLoad,#btnClear').trigger('click');
+					$('#btnClear').trigger('click');
+					loadBoard();
 				}
 			}
 		})
@@ -76,7 +62,8 @@ $(document)
 			url:'/updateBoard',type:'post',data:{id:id,title:title,content:content},dataType:'text',
 			success:function(data){
 				if(data=='ok') {
-					$('#btnLoad,#btnClear').trigger('click');
+					$('#btnClear').trigger('click');
+					loadBoard();
 				}
 			}
 		})
@@ -106,10 +93,28 @@ $(document)
 		url:'/deleteBoard',type:'post',data:{id:id},dataType:'text',
 		success:function(data) {
 			if(data=='ok') {
-				$('#btnLoad,#btnClear').trigger('click');
+				$('#btnClear').trigger('click');
+				loadBoard();
 			}
 		}
 	})
 })
+;
+function loadBoard() {
+	$.ajax({
+		url:'/list',type:'post',data:{},dataType:'json',
+		success:function(data){
+			$('#tblBoard tbody').empty();
+			for(let x of data) {
+				let str = '<tr>';
+				str +='<td>'+x['id']+'</td><td>'+x['title']+'</td><td>'+x['writer']+'</td><td>'+x['created']+'</td><td>'+x['hit']+'</td></tr>';
+				$('#tblBoard').append(str);
+			}
+		},
+		error:function(){},
+		complete:function(){}
+	})
+	return false;
+}
 </script>
 </html>

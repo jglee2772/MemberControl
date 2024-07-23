@@ -10,4 +10,6 @@ public interface MenuDAO {
 	void insertAddMenu(String a,int b);
 	void deleteMenu(int a);
 	void updateMenu(int a, String b, int c);
+	void insertAddrev(String a,int b,int c,int d);
+	ArrayList<revenueDTO> getRevList();
 }

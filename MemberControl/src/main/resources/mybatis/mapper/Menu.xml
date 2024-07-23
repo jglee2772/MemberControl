@@ -13,4 +13,13 @@
 	<update id="updateMenu">
 		update menu set name=#{param2},price=#{param3} where id=#{param1}
 	</update>
+	<insert id='insertAddrev'>
+		insert into revenue set mobile=#{param1},menuid=#{param2},qty=#{param3},menusum=#{param4}
+	</insert>
+	<select id="getRevList" resultType="com.himedia.mc.revenueDTO">
+		select a.id,a.mobile,b.name menuid,a.qty,a.menusum,a.created
+		from revenue a, menu b
+		where a.menuid=b.id
+		order by a.id desc;
+	</select>
 </mapper>
