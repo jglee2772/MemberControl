@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.himedia.mc.RoomDAO">
+	<select id="getTypeList" resultType="com.himedia.mc.roomtypeDTO">
+		select id,typename from roomtype
+	</select>
+	<insert id="insertRoom">
+		insert into room set name=#{param1},type=#{param2},personal=#{param3},price=#{param4}
+	</insert>
+	<update id="updateRoom">
+		update room set name=#{param2},type=#{param3},personal=#{param4},price=#{param5} where id=#{param1}
+	</update>
+	<select id="getRoomList" resultType="com.himedia.mc.roomDTO">
+		select a.id, b.typename, a.name, a.personal, a.price
+		from room a, roomtype b
+		where a.type=b.id
+		order by a.id;
+	</select>
+	<delete id="deleteRoom">
+		delete from room where id=#{param1}
+	</delete>
+</mapper>

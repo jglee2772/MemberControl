@@ -190,7 +190,7 @@ $(document)
 			url:'/addRevenue',type:'post',data:{mobile:mobile,menuid:mid,qty:qty,menusum:sum},dataType:'text',
 			success:function(data){
 				if(data=='ok') {
-					$('#ordercancel').trigger('click')
+					$('#ordercancel').trigger('click');
 					loadRevenue();
 				}
 			}
