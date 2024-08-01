@@ -289,20 +289,75 @@ public class HomeController {
 	@PostMapping("/addComment")
 	@ResponseBody
 	public String addComment(HttpServletRequest req) {
-		HttpSession s = req.getSession();
-		String writer =(String) s.getAttribute("userid");
-		String content = req.getParameter("content");
+	    HttpSession s = req.getSession();
+	    String writer = (String) s.getAttribute("userid");
+	    String content = req.getParameter("content");
 	    int boardid = Integer.parseInt(req.getParameter("boardid"));
 	    vdao.addComment(boardid, content, writer);
 	    return "ok";
 	}
-	@PostMapping("/updateComment")
+	@PostMapping("/addReply")
 	@ResponseBody
-	public String updateComment(HttpServletRequest req) {
+	public String addReply(HttpServletRequest req) {
 		HttpSession s = req.getSession();
-		String writer =(String) s.getAttribute("userid");
+	    String writer = (String) s.getAttribute("userid");
 		String content = req.getParameter("content");
+		int boardid = Integer.parseInt(req.getParameter("boardid"));
+		int parentid = Integer.parseInt(req.getParameter("parentId"));
+		vdao.addReply(boardid, parentid, content, writer);
 		return "ok";
+	}
+
+	@PostMapping("/deleteComment")
+	@ResponseBody
+	public String deleteComment(HttpServletRequest req) {
+	    int id = Integer.parseInt(req.getParameter("id"));
+	    vdao.deleteComment(id);
+	    return "ok";
+	}
+
+	@PostMapping("/updateComment")
+    @ResponseBody
+    public String updateComment(HttpServletRequest req) {
+        int id = Integer.parseInt(req.getParameter("id"));
+        String content = req.getParameter("content");
+        vdao.updateComment(id, content);
+        return "ok";
+    }
+
+	@PostMapping("/getComments")
+	@ResponseBody
+	public String getComments(HttpServletRequest req) {
+	    int boardid = Integer.parseInt(req.getParameter("boardid"));
+	    ArrayList<replyDTO> arReply = vdao.getreplyList(boardid);
+	    JSONArray ja = new JSONArray();
+	    for (replyDTO reply : arReply) {
+	        JSONObject jo = new JSONObject();
+	        jo.put("id", reply.getId());
+	        jo.put("content", reply.getContent());
+	        jo.put("writer", reply.getWriter());
+	        jo.put("created", reply.getCreated());
+	        jo.put("parid", reply.getPar_id());
+	        ja.put(jo);
+	    }
+	    return ja.toString();
+	}
+	@PostMapping("/getPar")
+	@ResponseBody
+	public String getPar(HttpServletRequest req) {
+		int parid = Integer.parseInt(req.getParameter("parid"));
+		ArrayList<replyDTO> arReply = vdao.getreplyList(parid);
+		JSONArray ja = new JSONArray();
+		for(replyDTO reply : arReply) {
+			JSONObject jo = new JSONObject();
+			jo.put("id", reply.getId());
+	        jo.put("content", reply.getContent());
+	        jo.put("writer", reply.getWriter());
+	        jo.put("created", reply.getCreated());
+	        jo.put("parid", reply.getPar_id());
+	        ja.put(jo);
+		}
+		return ja.toString();
 	}
 	@GetMapping("/delete")
 	public String delete(HttpServletRequest req) {
