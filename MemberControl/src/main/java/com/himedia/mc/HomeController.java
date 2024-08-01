@@ -19,6 +19,7 @@ public class HomeController {
 	@Autowired MemberDAO mdao;
 	@Autowired BoardDAO bdao;
 	@Autowired MenuDAO pdao;
+	@Autowired ViewDAO vdao;
 	
 	@PostMapping("/list")
 	@ResponseBody
@@ -281,7 +282,27 @@ public class HomeController {
 		boardDTO bdto = bdao.getView(id);
 		bdao.addHit(id);
 		model.addAttribute("board",bdto);
+		ArrayList<replyDTO> arReply = vdao.getreplyList(id);
+		model.addAttribute("arReply",arReply);
 		return "board/view";
+	}
+	@PostMapping("/addComment")
+	@ResponseBody
+	public String addComment(HttpServletRequest req) {
+		HttpSession s = req.getSession();
+		String writer =(String) s.getAttribute("userid");
+		String content = req.getParameter("content");
+	    int boardid = Integer.parseInt(req.getParameter("boardid"));
+	    vdao.addComment(boardid, content, writer);
+	    return "ok";
+	}
+	@PostMapping("/updateComment")
+	@ResponseBody
+	public String updateComment(HttpServletRequest req) {
+		HttpSession s = req.getSession();
+		String writer =(String) s.getAttribute("userid");
+		String content = req.getParameter("content");
+		return "ok";
 	}
 	@GetMapping("/delete")
 	public String delete(HttpServletRequest req) {

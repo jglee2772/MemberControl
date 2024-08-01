@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.himedia.mc.ViewDAO">
+<insert id="addComment">
+	insert into reply set par_id=#{param1}, content=#{param2}, writer=(select id from member where userid=#{param3}),
+	updated=current_timestamp, created=current_timestamp
+</insert>
+<select id="getreplyList" resultType="com.himedia.mc.replyDTO">
+	select b.userid as writer, a.content, a.created
+	from reply a,member b
+	where a.writer=b.id
+	and a.par_id=#{param1}
+</select>
+</mapper>
