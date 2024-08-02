@@ -12,13 +12,18 @@
 table { margin:auto; border-collapse:collapse; }
 td:nth-child(1){ text-align:right; }
 td {border:1px solid black; }
+textarea {
+            width: 100%;
+            box-sizing: border-box;
+        }
 </style>
 <body>
 <table id="tblone">
 <thead>
+<input type="hidden" id="hideid" value="${userid}">
 <tr><td>제목</td><td><input type="text" name="title" value="${board.title}" readonly></td></tr>
 <tr><td>작성자</td><td><input type="text" name="writer" value="${board.writer}" readonly></td></tr>
-<tr><td>게시글</td><td><textarea name="content" rows="20" cols="50" readonly>${board.content}</textarea></td></tr>
+<tr><td>게시글</td><td><textarea name="content" rows="20"  readonly>${board.content}</textarea></td></tr>
 <tr><td>작성시간</td><td>${board.created}</td></tr>
 <tr><td>수정시간</td><td>${board.updated}</td></tr>
 <tr><td colspan="2" style='text-align:center'>
@@ -49,7 +54,11 @@ $(document)
 	loadComments();
 })
 .on("click", "#btnon", function() {
-    $('#commentSection').toggle();
+	if($('#hideid').val()=='') {
+		window.location.href = "/login";
+	} else {
+		$('#commentSection').toggle();
+	}
 })
 .on("click", "#submitComment", function() {
     let content = $('#commentContent').val();
@@ -67,7 +76,11 @@ $(document)
 })
 .on("click", ".replyButton", function() {
     let id = $(this).data('id');
-    $('#replySection_' + id).toggle();
+    if($('#hideid').val()=='') {
+    	window.location.href = "/login";
+    } else {
+    	$('#replySection_' + id).toggle();
+    }
 })
 .on("click",".updateButton",function(){
 	let id = $(this).data('id');
@@ -118,6 +131,7 @@ $(document)
 
 function loadComments() {
 	let boardid = ${board.id};
+	let userid = $('#hideid').val();
     $.ajax({
         url: '/getComments',
         type: 'post',
@@ -126,45 +140,51 @@ function loadComments() {
         success: function(data) {
             $('#tblone tbody').empty();
             for (let x of data) {
-                let str = "";
+            	let str = "";
+            	if(x['parid']==0) {
+                
                 str += "<tr><td style='text-align:center;'>작성자 : " + x['writer'] + "</td><td style='text-align:right;'>작성일자 : " + x['created'] + "</td></tr>" +
                        "<tr><td colspan='2' style='text-align:right;'>" + x['content'] + "</td></tr>" +
                        "<tr><td colspan='2'>" +
-                       "<button class='replyButton' data-id='" + x['id'] + "'>답글</button>" +
-                       "<button class='updateButton' data-id='" + x['id'] + "'>수정</button>" +
+                	   "<button class='replyButton' data-id='" + x['id'] + "'>답글</button>"
+                if(x['writer']==userid) {
+                str += "<button class='updateButton' data-id='" + x['id'] + "'>수정</button>" +
                        "<button class='deleteCommentButton' data-id='" + x['id'] + "'>삭제</button>" +
-                       "</td></tr>";
-                if(x['id']==x['parid']) {
-                	let parid = x['parid'];
-                	$.ajax({
-                		url:'/getPar',
-                		type:'post',
-                		data:{parid:parid},
-                		dataType:'json',
-                		success:function(data) {
-                			for(let x of data) {
-                				str += "<tr><td style='text-align:center;'>작성자 : " + x['writer'] + "</td><td style='text-align:right;'>작성일자 : " + x['created'] + "</td></tr>" +
-                                "<tr><td colspan='2' style='text-align:right;'>" + x['content'] + "</td></tr>" +
-                                "<tr><td colspan='2'>" +
-                                "<button class='updateButton' data-id='" + x['id'] + "'>수정</button>" +
-                                "<button class='deleteCommentButton' data-id='" + x['id'] + "'>삭제</button>" +
-                                "</td></tr>";
-                			}
-                		}
-                	})
+                       "</td></tr>";           
+                } else {
+                	str += "</td></tr>";
                 }
                 str += "<tr><td colspan='2' id='replySection_" + x['id'] + "' style='display:none;'>" +
                        "<h4>답글 작성</h4>" +
-                       "<textarea class='replyContent' rows='3' cols='60' placeholder='답글을 입력하세요...'></textarea><br>" +
+                       "<textarea class='replyContent' rows='3' placeholder='답글을 입력하세요...' style='resize:none;'></textarea><br>" +
                        "<button class='submitReplyButton' data-id='" + x['id'] + "'>답글 추가</button>" +
                        "</td></tr>"+
                        "<tr><td colspan='2' id='updateSection_" + x['id'] + "' style='display:none;'>" +
                        "<h4>수정글 작성</h4>" +
-                       "<textarea class='updateContent' rows='3' cols='60' placeholder='수정글을 입력하세요...'></textarea><br>" +
+                       "<textarea class='updateContent' rows='3' placeholder='수정글을 입력하세요...' style='resize:none;'></textarea><br>" +
                        "<button class='updateCommentButton' data-id='" + x['id'] + "'>수정하기</button>" +
                        "</td></tr>";
-                $('#tblone tbody').append(str);
-                
+            	}
+            	for(let y of data) {
+            		if(x['id']==y['parid']) {
+            			str += "<tr><td style='text-align:center;'>대댓글</td><td style='text-align:right;'>작성자 : " + y['writer'] + " 작성일자 : " + y['created'] + "</td></tr>" +
+            				   "<tr><td colspan='2' style='text-align:right;'>" + y['content'] + "</td></tr>"            				   
+            			if(y['writer']==userid) {
+            			str += "<tr><td colspan='2'>" +
+            				   "<button class='updateButton' data-id='" + y['id'] + "'>수정</button>" +
+            				   "<button class='deleteCommentButton' data-id='" + y['id'] + "'>삭제</button>" +
+            				   "</td></tr>";            			
+            			str += "<tr><td colspan='2' id='updateSection_" + y['id'] + "' style='display:none;'>" +
+		                       "<h4>수정글 작성</h4>" +
+		                       "<textarea class='updateContent' rows='3' placeholder='수정글을 입력하세요...' style='resize:none;'></textarea><br>" +
+		                       "<button class='updateCommentButton' data-id='" + y['id'] + "'>수정하기</button>" +
+		                       "</td></tr>";
+		                } else {
+	            			str += "</td></tr>";
+            			}
+            		}
+            	}
+            	$('#tblone tbody').append(str);
             }
         }
     });

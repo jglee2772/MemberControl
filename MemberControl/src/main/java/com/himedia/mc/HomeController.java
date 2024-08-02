@@ -278,9 +278,12 @@ public class HomeController {
 	}
 	@GetMapping("/view")
 	public String view(HttpServletRequest req, Model model) {
+		HttpSession s = req.getSession();
+		String userid = (String) s.getAttribute("userid");
 		int id =Integer.parseInt(req.getParameter("id"));
 		boardDTO bdto = bdao.getView(id);
 		bdao.addHit(id);
+		model.addAttribute("userid",userid);
 		model.addAttribute("board",bdto);
 		ArrayList<replyDTO> arReply = vdao.getreplyList(id);
 		model.addAttribute("arReply",arReply);
@@ -340,6 +343,7 @@ public class HomeController {
 	        jo.put("parid", reply.getPar_id());
 	        ja.put(jo);
 	    }
+	    
 	    return ja.toString();
 	}
 	@PostMapping("/getPar")
