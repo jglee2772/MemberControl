@@ -11,5 +11,4 @@ public interface ViewDAO {
     void updateComment(int id, String content);
     ArrayList<replyDTO> getreplyList(int boardId);
     void addReply(int boardid, int parentid, String content, String writer);
-    ArrayList<replyDTO> getparList(int parid);
 }

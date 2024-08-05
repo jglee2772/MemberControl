@@ -23,10 +23,4 @@
 	 insert into reply set board_id=#{param1}, content=#{param3}, writer=(select id from member where userid=#{param4}),
 	 par_id=#{param2}, updated=current_timestamp, created=current_timestamp
 </insert>
-<select id="getparList" resultType="com.himedia.mc.replyDTO">
-	select a.id, b.userid AS writer, a.content, a.created, a.par_id
-	from reply a,member b
-	where a.writer=b.id
-	and a.par_id=#{param1}
-</select>
 </mapper>
